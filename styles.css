@@ -244,6 +244,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding: var(--spacing-lg);
+    padding-bottom: 100px; /* Space for fixed input area */
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }
@@ -493,11 +494,19 @@ body {
 
 /* Input Area */
 .input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: var(--bg-secondary);
     border-top: 1px solid var(--border-color);
     padding: var(--spacing-md) var(--spacing-lg);
     padding-bottom: calc(var(--spacing-md) + var(--safe-area-bottom));
     flex-shrink: 0;
+    z-index: 100;
+    transform: translateZ(0);
+    will-change: transform;
+    transition: transform 0.1s ease-out;
 }
 
 .input-wrapper {
@@ -876,5 +885,28 @@ body {
     .messages-container {
         overflow: visible;
         height: auto;
+    }
+}
+
+/* Keyboard Visible State */
+body.keyboard-visible {
+    /* Prevent body from scrolling when keyboard is visible */
+    overflow: hidden;
+}
+
+body.keyboard-visible .messages-container {
+    /* Ensure messages container adjusts */
+    padding-bottom: 100px;
+}
+
+body.keyboard-visible .input-area {
+    /* Ensure input area stays on top */
+    position: fixed;
+}
+
+/* Ensure input area doesn't get covered by keyboard */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .input-area {
+        padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
     }
 }
