@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+</head>
+<body>
+    <h1>OpenClaw Icon Generator</h1>
+    <p>点击按钮下载不同尺寸的 PNG 图标</p>
+    <div id="buttons"></div>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+        function drawIcon(ctx, size) {
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#8b5cf6');
+
+            // Rounded rectangle background
+            const radius = size * 0.2;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Scale factor
+            const s = size / 512;
+
+            // Circle (main body)
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 20 * s;
+            ctx.beginPath();
+            ctx.arc(256 * s, 256 * s, 140 * s, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Eyes (three circles)
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(180 * s, 200 * s, 24 * s, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(256 * s, 170 * s, 24 * s, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(332 * s, 200 * s, 24 * s, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Smile arc
+            ctx.beginPath();
+            ctx.arc(256 * s, 280 * s, 80 * s, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+
+            // AI dot
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(256 * s, 310 * s, 8 * s, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function downloadIcon(size) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            drawIcon(ctx, size);
+
+            const link = document.createElement('a');
+            link.download = `icon-${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Create download buttons
+        const buttonsDiv = document.getElementById('buttons');
+        sizes.forEach(size => {
+            const btn = document.createElement('button');
+            btn.textContent = `Download ${size}x${size}`;
+            btn.onclick = () => downloadIcon(size);
+            btn.style.cssText = 'margin: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer;';
+            buttonsDiv.appendChild(btn);
+        });
+    </script>
+</body>
+</html>
